@@ -27,7 +27,7 @@ IsDone = abs(NextState(2)) < y_target;
 
 % Additional reward to incentivize end inside target circle
 if IsDone && norm([NextState(1); 0; NextState(3)]) < r_circ_target
-    Reward = Reward + 10; 
+    Reward = Reward + 10 + (1 - norm(NextState(4:6)/min_velocity)); 
 end
 
 % Verify other stop conditions (approach cone, minimum velocity, SC aument distance with target, outside taget circle)
@@ -35,8 +35,8 @@ vec1 = NextState(1:3) / norm(NextState(1:3));
 vec2 = [0; -1; 0];
 angle = acos(dot(vec1,vec2));
 
-if angle > coneAngle || NextState(2) < State(2) || norm(NextState(4:6)) < min_velocity ...
-         || (IsDone && norm([NextState(1); 0; NextState(3)]) < 2.5) 
+if angle > coneAngle || NextState(2) < State(2) || norm(NextState(4:6)) < min_velocity/10 %...
+        % || (IsDone && norm([NextState(1); 0; NextState(3)]) > 10) 
     Reward = Reward - 100;
     IsDone = true;
 end
