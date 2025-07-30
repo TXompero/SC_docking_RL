@@ -35,8 +35,8 @@ vec1 = NextState(1:3) / norm(NextState(1:3));
 vec2 = [0; -1; 0];
 angle = acos(dot(vec1,vec2));
 
-if angle > coneAngle || NextState(2) < State(2) || norm(NextState(4:6)) < min_velocity ...
-        || (IsDone && norm([NextState(1); 0; NextState(3)]) > r_circ_target) 
+if angle > coneAngle || NextState(2) < State(2) || norm(NextState(4:6)) < min_velocity %...
+        % || (IsDone && norm([NextState(1); 0; NextState(3)]) > r_circ_target) 
     Reward = Reward - 100;
     IsDone = true;
 end
