@@ -27,7 +27,7 @@ IsDone = abs(NextState(2)) < y_target;
 
 % Additional reward to incentivize end inside target circle
 if IsDone && norm([NextState(1); 0; NextState(3)]) < r_circ_target
-    Reward = Reward + 3; 
+    Reward = Reward + 10; 
 end
 
 % Verify other stop conditions (approach cone, minimum velocity, SC aument distance with target, outside taget circle)

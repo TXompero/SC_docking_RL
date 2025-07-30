@@ -9,13 +9,14 @@ th = linspace(0, 2*pi, 1e3);
 
 % Plot the sphere
 figure(1)
-plot3(0,0,0,'ko','LineWidth',2)
+plot3(0,0,0,'ko','LineWidth',2,'DisplayName','Target spacecraft')
 hold on
 axis equal
-xlabel('X'); ylabel('Y'); zlabel('Z');
-plot3(r_start*cos(th),-y_start*ones(length(th)),r_start*sin(th),'k','LineWidth',1.5)
-plot3(r_target*cos(th),-y_target*ones(length(th)),r_target*sin(th),'k','LineWidth',1.5)
-title('Position visualization')
+xlabel('LVLH x axis [m]'); ylabel('LVLH y axis [m]'); zlabel('LVLH z axis [m]');
+fill3(r_start*cos(th),-y_start*ones(length(th)),r_start*sin(th),'r','FaceAlpha',0.2,'DisplayName','Initial position region')
+plot3(r_target*cos(th),-y_target*ones(length(th)),r_target*sin(th),'k','LineWidth',1.5,'DisplayName','Target circle position')
+title('Trajectory visualization')
+grid on
 
 % Plot cone
 height = init_y+5;        
@@ -25,7 +26,7 @@ n = 100;                      % Resolution
 % Generate angle and height arrays
 h = linspace(0, height, n);
 [Theta, H] = meshgrid(th, h);
-th = 0;
+
 % Radius tapers linearly from tip to base
 R = (H / height) * radius;
 
@@ -62,16 +63,34 @@ clear length
 % n_chief = sqrt(GM_e / a_chief^3);
 t_end = 0;
 
-% odeOpts = odeset('RelTol',1e-13,'AbsTol',1e-13);
 figure(2)
 subplot(3,1,1); grid on; hold on
+title('Spacecraft velocity x axis')
+xlabel('Time [s]')
+ylabel('Velocity [m/s]')
 subplot(3,1,2); grid on; hold on
+title('Spacecraft velocity y axis')
+xlabel('Time [s]')
+ylabel('Velocity [m/s]')
 subplot(3,1,3); grid on; hold on
+title('Spacecraft velocity z axis')
+xlabel('Time [s]')
+ylabel('Velocity [m/s]')
 
 figure(3)
+title('Accelerations')
 subplot(3,1,1); grid on; hold on
+title('Spacecraft acceleration x axis')
+xlabel('Time [s]')
+ylabel('Accel. [m/s^2]')
 subplot(3,1,2); grid on; hold on
+title('Spacecraft acceleration y axis')
+xlabel('Time [s]')
+ylabel('Accel. [m/s^2]')
 subplot(3,1,3); grid on; hold on
+title('Spacecraft acceleration z axis')
+xlabel('Time [s]')
+ylabel('Accel. [m/s^2]')
 
 for i = 1:it
 
@@ -108,7 +127,7 @@ for i = 1:it
         end
 
         % For first iteration plot velocity and acceleration evolution over time
-        if it == 1
+        if i == 1
             
             figure(2)
             subplot(3,1,1); plot(tt_prop+t_end,xx_prop(:,4),'b','LineWidth',1.5)
@@ -156,17 +175,29 @@ end
 % Fill additional plot
 figure(4)
 grid on; hold on
-plot(1:it,vel_treshold)
+plot(1:it,vel_treshold,'LineWidth',1.5)
+xlabel('Iteration')
+ylabel('Final velocity [m/s]')
+title('Final velocity')
 
 figure(5)
 grid on; hold on
-plot(1:it,vel_init)
+plot(1:it,vel_init,'LineWidth',1.5)
+xlabel('Iteration')
+ylabel('Initial velocity [m/s]')
 
 figure(6)
 grid on; hold on
-plot(1:it,reward)
+plot(1:it,reward,'LineWidth',1.5)
+xlabel('Iteration')
+ylabel('Episode reward')
 
 figure(7)
 grid on; hold on
-plot(cos(th),sin(th),'k--')
-plot(final_pos(:,1),final_pos(:,2),'*')
+plot(r_target*cos(th),r_target*sin(th),'k--','LineWidth',1.5)
+legend('r = 5 m','Autoupdate','off')
+plot(final_pos(:,1),final_pos(:,2),'*','LineWidth',1.5)
+xlabel('LVLH x axis [m]')
+ylabel('LVLH z axis [m]')
+title('Final position, y = -10 m')
+axis equal
