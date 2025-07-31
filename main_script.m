@@ -3,16 +3,13 @@ clear; clc; close all
 
 %% Set parameters
 
+% Set flag to 1 if training a clean agent, 0 to analyze the previously obtained solution
+flag = 1;
+
 % Orbital and chief parameters
 GM_e = 398600;     % [km^3/s^2]
 
 a_chief = 6780;     % [km]
-e_chief = 0;        % [-]
-i_chief = 0;        % [deg]
-OM_chief = 0;       % [deg]
-om_chief = 0;       % [deg]
-th_chief = 0;       % [deg]
-kep_chief = [a_chief, e_chief, i_chief, OM_chief, om_chief, th_chief];
 
 n_chief = sqrt(GM_e / a_chief^3);
 
@@ -83,11 +80,11 @@ agentOptions.ActorOptimizerOptions = actorOptions;
 
 % Exploration noise settings
 agentOptions.ExplorationModel.StandardDeviationMin = 0;
-agentOptions.ExplorationModel.StandardDeviation = 0.4;
-agentOptions.ExplorationModel.StandardDeviationDecayRate = 0.0005;
+agentOptions.ExplorationModel.StandardDeviation = 0.2;
+agentOptions.ExplorationModel.StandardDeviationDecayRate = 0.001;
 
 % Fix randomness (optional), uncomment line below if wanted
-% rng(0,"twister");
+rng(0,"twister");
 
 % Create agent
 agent = rlTD3Agent(obsInfo,actInfo,initOpts,agentOptions);
@@ -107,7 +104,7 @@ trainingOptions = rlTrainingOptions(...
     Verbose=false,...
     Plots="training-progress",...
     StopTrainingCriteria="AverageReward",...
-    StopTrainingValue=200, ...
+    StopTrainingValue=150, ...
     UseParallel=true);
 
 % Agent evaluator (Optional), used to obtain episodes with no exploration noise
@@ -116,7 +113,11 @@ trainingOptions = rlTrainingOptions(...
 evl = rlEvaluator(NumEpisodes=8,EvaluationFrequency=250,EvaluationStatisticType="MinEpisodeReward");
 
 % Perform train
-trainingStats = train(agent,env,trainingOptions,Evaluator=evl);
+if flag 
+    trainingStats = train(agent,env,trainingOptions,Evaluator=evl);
+else
+    load('nominal_agent.mat')
+end
 
 %% Evaluate agent solution
 
