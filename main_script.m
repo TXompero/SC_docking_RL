@@ -4,7 +4,7 @@ clear; clc; close all
 %% Set parameters
 
 % Set flag to 1 if training a clean agent, 0 to analyze the previously obtained solution
-flag = 1;
+flag = 0;
 
 % Orbital and chief parameters
 GM_e = 398600;     % [km^3/s^2]
